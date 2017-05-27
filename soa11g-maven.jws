@@ -17,6 +17,7 @@
       <value n="oracle.mds.internal.dt.ide.migrator.MDSConfigMigratorHelper" v="11.1.1.0.5313"/>
    </hash>
    <list n="listOfChildren">
+      <hash><url n="URL" path="maven-enabled-sca/maven-enabled-sca.jpr"/></hash>
       <hash><url n="URL" path="pdf-print-servlet/pdf-print-servlet.jpr"/></hash>
    </list>
 </jws:workspace>
