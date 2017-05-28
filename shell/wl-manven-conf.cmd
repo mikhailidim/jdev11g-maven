@@ -1,11 +1,29 @@
-@SET ECHO OFF
+@ECHO OFF
 REM Configure environment
 SET FMW_HOME=C:\Oracle\Middleware
+IF /i [%1] == [] (
+ SET /p FMW_HOME="Please specify your Middleware home [%FMW_HOME%]:"
+) else (
+ SET FMW_HOME=%1
+) 
 SET ORACLE_HOME=%FMW_HOME%\JDeveloper
 SET MVN_HOME=%ORACLE_HOME%\apache-maven-2.1.0
 SET WLS_HOME=%FMW_HOME%\wlserver_10.3
 SET JAVA_HOME=%FMW_HOME%\jdk160_24
 SET LOG=%~dp0\wls-maven-conf.log
+
+ECHO "Environment Configuration" > %LOG%
+ECHO 
+ECHO ORACLE_HOME=%ORACLE_HOME% >>%LOG%
+ECHO JAVA_HOME=%JAVA_HOME% >>%LOG%
+ECHO MVN_HOME=%MVN_HOME% >>%LOG%
+ECHO TEMP=%TMP%\wlmaven >>%LOG%
+ECHO 
+ECHO "-------------------------------------" >>%LOG%
+
+%JAVA_HOME%\bin\java -version >>%LOG%
+$MVN_HOME\bin\mvn6 -version >>%LOG%
+ECHO 
 ECHO "Prepare plugin" >%LOG%
 pushd .
 
@@ -13,6 +31,7 @@ mkdir %TMP%\wlmaven
 copy wls-pom.xml %TMP%\wlmaven\pom.xml
 
 cd %WLS_HOME%\server\lib\
+%JAVA_HOME%\bin\java -jar %WLS_HOME%\server\lib\wljarbuilder.jar -profile wlfullclient >> %LOG% 2>&1
 %JAVA_HOME%\bin\java -jar %WLS_HOME%\server\lib\wljarbuilder.jar -profile weblogic-maven-plugin >> %LOG% 2>&1
 move weblogic-maven-plugin.jar %TMP%\wlmaven
 
