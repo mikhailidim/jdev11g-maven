@@ -13,11 +13,12 @@ This folder contains configuration scripts and plugin template. Scripts automate
 1. Clone repository or download script file for you target platform and plugin configuration template to some local folder.
 2. Don't forget to change permissions for the linux platform
    $ __chmod u+x wl-maven-conf.sh__
-3. Type command  for Linux: 
-    -  $ ./wl-maven-config.sh [jdev-fmw-dir]
-    For Windows:
-	-  C>wl-maven-config.cmd [jdev-fmw-dir]
-	Where  **jdev-fmw-dir** optional argument with the your Oracle Fusion Middleware Installation directory. Your SOA Studio is installed **${jdev-fmw-dir}**/jdeveloper
+3. Type command  
+    - For Linux:  $ **./wl-maven-config.sh [jdev-fmw-dir]**
+    - For Windows:  C>**wl-maven-config.cmd [jdev-fmw-dir]**
+    
+    Where  **jdev-fmw-dir** optional argument with the your Oracle Fusion Middleware Installation directory. 
+     Your SOA Studio folder is similar to **${jdev-fmw-dir}**/jdeveloper
     If you ommit this parameter script will ask you to enter value.
 4. After a while it will produce wls-maven-config.log 
 	
