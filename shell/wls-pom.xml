@@ -4,7 +4,7 @@
   <groupId>com.oracle.weblogic</groupId>
   <artifactId>weblogic-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>10.3.6</version>
+  <version>10.3.4</version>
   <name>Maven Mojo Archetype</name>
   <url>http://maven.apache.org</url>
   <dependencies>
