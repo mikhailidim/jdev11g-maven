@@ -1,0 +1,12 @@
+<part  name="detail">
+	<detail>ORAMED-01007:[Header variable declaration not valid]Header variable "" not recognized.Possible Fix:Header variable should be of the format $in.header.<prefix>_<root-elem>. Fix the header variable.
+	</detail>
+</part>
+		<part  name="code">
+			<code>null</code>
+		</part>
+	</remoteFault>
+</bpelFault>
+</fault>
+<faultType>
+	<message>0</message>
