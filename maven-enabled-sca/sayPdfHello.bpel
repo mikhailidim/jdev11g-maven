@@ -1,0 +1,203 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Jul 04 08:33:02 EDT 2017
+  Author:  mmikhailidi
+  Type: BPEL 2.0 Process
+  Purpose: Synchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="sayPdfHello"
+               targetNamespace="http://mmikhail.com/soa11g_maven/maven_enabled_sca/sayPdfHello"
+               xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+               xmlns:client="http://mmikhail.com/soa11g_maven/maven_enabled_sca/sayPdfHello"
+               xmlns:ora="http://schemas.oracle.com/xpath/extension"
+               xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns1="http://mmikhail.com/demo/ide/"
+         xmlns:ns2="http://mmikhail.com"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ns3="http://xmlns.oracle.com/ias/pcbpel/NotificationService">
+
+    <import namespace="http://mmikhail.com/soa11g_maven/maven_enabled_sca/sayPdfHello" location="sayPdfHello.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="saypdfhello_client" partnerLinkType="client:sayPdfHello" myRole="sayPdfHelloProvider"/>
+    <partnerLink name="GetPDF" partnerLinkType="ns1:GetPDF"
+                 partnerRole="fo2Pdf"/>
+    <partnerLink name="DeliverAttachment"
+                 partnerLinkType="ns3:NotificationServiceLink"
+                 partnerRole="NotificationServiceProvider"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="client:sayPdfHelloRequestMessage"/>
+
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="outputVariable" messageType="client:sayPdfHelloResponseMessage"/>
+    <variable name="ProducePDF_makePDF_InputVariable"
+              messageType="ns1:makePDF"/>
+    <variable name="ProducePDF_makePDF_OutputVariable"
+              messageType="ns1:makePDFResponse"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in sayPdfHello.wsdl) -->
+    <receive name="receiveInput" partnerLink="saypdfhello_client" portType="client:sayPdfHello" operation="process" variable="inputVariable" createInstance="yes"/>
+    <assign name="PassName">
+      <copy>
+        <from>$inputVariable.payload</from>
+        <to>$ProducePDF_makePDF_InputVariable.parameters/arg0</to>
+      </copy>
+    </assign>
+    <invoke name="ProducePDF" partnerLink="GetPDF"
+            portType="ns1:fo2Pdf" operation="makePDF"
+            inputVariable="ProducePDF_makePDF_InputVariable"
+            outputVariable="ProducePDF_makePDF_OutputVariable"
+            bpelx:invokeAsDetail="no"/>
+    <scope name="Email1">
+      <bpelx:annotation>
+        <bpelx:pattern patternName="bpelx:email"/>
+        <bpelx:general>
+          <bpelx:property name="userLabel">
+            <![CDATA[DeliverHello]]>
+          </bpelx:property>
+        </bpelx:general>
+      </bpelx:annotation>
+      <variables>
+        <variable name="varNotificationReq"
+                  messageType="ns3:EmailNotificationRequest"/>
+        <variable name="varNotificationResponse"
+                  messageType="ns3:ArrayOfResponse"/>
+        <variable name="NotificationServiceFaultVariable"
+                  messageType="ns3:NotificationServiceErrorMessage"/>
+      </variables>
+      <sequence name="Sequence1">
+        <assign name="EmailParamsAssign">
+          <copy>
+            <from>string('Default')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:FromAccountName</query>
+            </to>
+          </copy>
+          <copy>
+            <from>string('')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:FromUserName</query>
+            </to>
+          </copy>
+          <copy>
+            <from>string('')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Bcc</query>
+            </to>
+          </copy>
+          <copy>
+            <from>string('')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Cc</query>
+            </to>
+          </copy>
+          <copy>
+            <from>string('')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:ReplyToAddress</query>
+            </to>
+          </copy>
+          <copy>
+            <from>string('Hello World report')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Subject</query>
+            </to>
+          </copy>
+          <copy>
+            <from>concat($inputVariable.payload, '@corporate.com')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:To</query>
+            </to>
+          </copy>
+          <copy>
+            <from><literal><Content xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"><MimeType xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService">multipart/mixed</MimeType><ContentBody xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"><MultiPart xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"> <BodyPart xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"><MimeType xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/><ContentBody xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/><BodyPartName xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/></BodyPart> <BodyPart xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"><MimeType xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/><ContentBody xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/><BodyPartName xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/></BodyPart></MultiPart></ContentBody></Content></literal></from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Content</query>
+            </to>
+          </copy>
+          <copy>
+            <from>string('text/html; charset=UTF-8')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[1]/ns3:MimeType</query>
+            </to>
+          </copy>
+          <copy>
+            <from>string('')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[1]/ns3:ContentBody</query>
+            </to>
+          </copy>
+          <copy>
+            <from>string('application/pdf;')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[2]/ns3:MimeType</query>
+            </to>
+          </copy>
+          <copy>
+            <from>concat('Hello-',$inputVariable.payload,'.pdf')</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[2]/ns3:BodyPartName</query>
+            </to>
+          </copy>
+          <copy>
+            <from>$ProducePDF_makePDF_OutputVariable.parameters/return</from>
+            <to variable="varNotificationReq" part="EmailPayload">
+              <query>ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[2]/ns3:ContentBody</query>
+            </to>
+          </copy>
+        </assign>
+        <invoke name="InvokeNotificationService"
+                portType="ns3:NotificationService"
+                partnerLink="DeliverAttachment"
+                inputVariable="varNotificationReq"
+                outputVariable="varNotificationResponse"
+                operation="sendEmailNotification"/>
+      </sequence>
+    </scope>
+    <!-- Generate reply to synchronous request -->
+    <reply name="replyOutput" partnerLink="saypdfhello_client" portType="client:sayPdfHello" operation="process" variable="outputVariable"/>
+  </sequence>
+</process>

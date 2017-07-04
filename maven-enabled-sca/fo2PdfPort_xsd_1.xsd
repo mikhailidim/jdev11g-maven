@@ -1,0 +1,17 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<xs:schema xmlns:tns="http://mmikhail.com/demo/ide/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     version="1.0" targetNamespace="http://mmikhail.com/demo/ide/">
+    <xs:element name="makePDF" type="tns:makePDF"/>
+    <xs:element name="makePDFResponse" type="tns:makePDFResponse"/>
+    <xs:complexType name="makePDF">
+        <xs:sequence>
+            <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="makePDFResponse">
+        <xs:sequence>
+            <xs:element name="return" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+<!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Oracle JAX-WS 2.1.5. -->

@@ -61,6 +61,7 @@
       <string v="oracle.bpm.fusion.repository.BPMProjectSettings/bpmProjectsProcessesContentSet"/>
    </list>
    <value n="defaultPackage" v="com.mmikhail.demo.ide"/>
+   <value n="Namespace" v="http://mmikhail.com/soa11g_maven/maven_enabled_sca/sayPdfHello"/>
    <hash n="oracle.ide.model.ResourcePaths">
       <hash n="resourcesContentSet">
          <list n="url-path"/>
@@ -69,6 +70,10 @@
    <hash n="oracle.ide.model.TechnologyScopeConfiguration">
       <list n="technologyScope">
          <string v="SOA"/>
+         <string v="XML"/>
+         <string v="Maven"/>
+         <string v="Ant"/>
+         <string v="Java"/>
       </list>
    </hash>
    <hash n="oracle.jdeveloper.compiler.OjcConfiguration">
@@ -263,6 +268,9 @@
          <string v="maven-enabled-sca"/>
       </list>
    </hash>
+   <hash n="oracle.jdeveloper.maven.compiler.MavenRunConfiguration">
+      <url n="pomfileURL" path="pom.xml"/>
+   </hash>
    <hash n="oracle.jdeveloper.model.J2eeSettings">
       <value n="j2eeWebAppName" v="soa11g-maven-maven-enabled-sca-webapp"/>
       <value n="j2eeWebContextRoot" v="soa11g-maven-maven-enabled-sca-context-root"/>
@@ -363,4 +371,11 @@
          </list>
       </hash>
    </hash>
+   <value n="ProcessName" v="sayPdfHello"/>
+   <url n="sayPdfHello_bpelFileURL" path="sayPdfHello.bpel"/>
+   <value n="sayPdfHello_Namespace" v="http://mmikhail.com/soa11g_maven/maven_enabled_sca/sayPdfHello"/>
+   <value n="sayPdfHello_ProcessName" v="sayPdfHello"/>
+   <value n="sayPdfHello_Template" v="BPEL_SYNC_PROCESS"/>
+   <value n="sayPdfHello_wsdl" v="sayPdfHello.wsdl"/>
+   <value n="Template" v="BPEL_SYNC_PROCESS"/>
 </jpr:project>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://mmikhail.com" targetNamespace="http://mmikhail.com"
+            elementFormDefault="qualified">
+  <xsd:element name="HelloRequest" type="xsd:string">
+    <xsd:annotation>
+      <xsd:documentation>
+        A sample element
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="HelloResponse" type="xsd:string"/>
+</xsd:schema>

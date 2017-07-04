@@ -379,6 +379,9 @@
                         </list>
                      </hash>
                      <value n="internalName" v="libraries"/>
+                     <list n="selectedLibraries">
+                        <url path="../../../../Users/mmikhailidi/AppData/Roaming/JDeveloper/system11.1.1.7.40.64.93/o.jdeveloper/Apache FOP 2.2.library"/>
+                     </list>
                      <value n="targetWithinJar" v="WEB-INF/lib"/>
                      <value n="type" v="3"/>
                   </hash>

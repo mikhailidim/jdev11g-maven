@@ -10,8 +10,49 @@
            xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
            xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy"
            xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+  <import namespace="http://mmikhail.com/demo/ide/" location="fo2PdfPort.wsdl"
+          importType="wsdl"/>
+  <import namespace="http://mmikhail.com/soa11g_maven/maven_enabled_sca/sayPdfHello"
+          location="sayPdfHello.wsdl" importType="wsdl"/>
+  <import namespace="http://mmikhail.com/demo/ide/"
+          location="fo2PdfPortWrapper.wsdl" importType="wsdl"/>
+  <import namespace="http://xmlns.oracle.com/ias/pcbpel/NotificationService"
+          location="NotificationService.wsdl" importType="wsdl"/>
+  <service name="saypdfhello_client_ep" ui:wsdlLocation="sayPdfHello.wsdl">
+    <interface.wsdl interface="http://mmikhail.com/soa11g_maven/maven_enabled_sca/sayPdfHello#wsdl.interface(sayPdfHello)"/>
+    <binding.ws port="http://mmikhail.com/soa11g_maven/maven_enabled_sca/sayPdfHello#wsdl.endpoint(saypdfhello_client_ep/sayPdfHello_pt)"/>
+  </service>
   <property name="productVersion" type="xs:string" many="false">11.1.1.7.8</property>
-  <component name="Mediator1">
-    <implementation.mediator src="Mediator1.mplan"/>
+  <component name="sayPdfHello" version="2.0">
+    <implementation.bpel src="sayPdfHello.bpel"/>
+    <property name="bpel.config.transaction" type="xs:string" many="false">required</property>
+    <property name="bpel.config.oneWayDeliveryPolicy" type="xs:string"
+              many="false">async.persist</property>
   </component>
+  <reference name="GetPDF" ui:wsdlLocation="fo2PdfPort.wsdl">
+    <interface.wsdl interface="http://mmikhail.com/demo/ide/#wsdl.interface(fo2Pdf)"/>
+    <binding.ws port="http://mmikhail.com/demo/ide/#wsdl.endpoint(fo2PdfService/fo2PdfPort)"
+                location="REPLACE.ME" soapVersion="1.1">
+      <property name="weblogic.wsee.wsat.transaction.flowOption"
+                type="xs:string" many="false">WSDLDriven</property>
+    </binding.ws>
+  </reference>
+  <reference name="DeliverReport"
+             ui:wsdlLocation="NotificationService.wsdl">
+    <interface.wsdl interface="http://xmlns.oracle.com/ias/pcbpel/NotificationService#wsdl.interface(NotificationService)"/>
+    <binding.wsif port="http://xmlns.oracle.com/ias/pcbpel/NotificationService#wsdl.endpoint(NotificationService/JavaPort)"
+                  location="NotificationService.wsdl"/>
+  </reference>
+  <wire>
+    <source.uri>saypdfhello_client_ep</source.uri>
+    <target.uri>sayPdfHello/saypdfhello_client</target.uri>
+  </wire>
+  <wire>
+    <source.uri>sayPdfHello/GetPDF</source.uri>
+    <target.uri>GetPDF</target.uri>
+  </wire>
+  <wire>
+    <source.uri>sayPdfHello/DeliverAttachment</source.uri>
+    <target.uri>DeliverReport</target.uri>
+  </wire>
 </composite>

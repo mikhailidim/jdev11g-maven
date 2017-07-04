@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>pdf-print-app</groupId>
+  <artifactId>maven-enabled-sca</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>${project.groupId}/${project.artifactId}_v${project.version}</name>
+  <parent>
+    <groupId>pdf-print-app</groupId>
+    <artifactId>soa11g-maven</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+    <properties>
+        <sca.application>${basedir}/..</sca.application>
+    </properties>
+    <build>
+        <sourceDirectory>SCA-INF/src/</sourceDirectory>
+        <testSourceDirectory>test/</testSourceDirectory>
+        <outputDirectory>SCA-INF/classes</outputDirectory>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>SCA-INF/classes</directory>
+                            <includes>
+                                <include>**/*.class</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-jar-plugin</artifactId>
+               <configuration>
+                  <outputDirectory>SCA-INF/lib</outputDirectory>
+               </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sca-package</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <property name="scac.application.home"
+                                          value="${basedir}/.."/>
+                                <property name="build.compiler"
+                                          value="extJavac"/>
+                                <property name="compositeName"
+                                          value="${project.artifactId}"/>
+                                <property name="compositeDir"
+                                          value="${basedir}"/>
+                                <property name="revision"
+                                          value="${project.version}"/>
+                                <property name="configplan"
+                                          value="${basedir}/${project.artifactId}_cfgplan.xml"/>           
+                                <ant antfile="${jdev.home}/bin/ant-sca-package.xml"
+                                     dir="${jdev.home}/bin" target="package"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>sca-undeploy</id>
+                        <phase>deploy</phase>
+                        <configuration>
+                            <target>
+                                <property name="serverURL"
+                                          value="${soaURL}"/>
+                                <property name="user" value="${wlUsername}"/>
+                                <property name="password"
+                                          value="${wlPassword}"/>
+                                <property name="compositeName"
+                                          value="${project.artifactId}"/>
+                                <property name="revision"
+                                          value="${project.version}"/>
+                                <property name="sarLocation"
+                                          value="${basedir}/deploy/sca_${project.artifactId}_rev${project.version}.jar"/>
+                                <property name="overwrite" value="true"/>
+                                <property name="forceDefault" value="true"/>
+                                <property name="configplan"
+                                          value="${basedir}/${project.artifactId}_cfgplan.xml"/>           
+                                <property name="partition"
+                                          value="${soaPartition}"/>
+                                <ant antfile="${jdev.home}/bin/ant-sca-deploy.xml"
+                                     dir="${jdev.home}/bin" target="undeploy"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>sca-deploy</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <property name="serverURL"
+                                          value="${soaURL}"/>
+                                <property name="user" value="${wlUsername}"/>
+                                <property name="password"
+                                          value="${wlPassword}"/>
+                                <property name="sarLocation"
+                                          value="${basedir}/deploy/sca_${project.artifactId}_rev${project.version}.jar"/>
+                                <property name="overwrite" value="true"/>
+                                <property name="forceDefault" value="true"/>
+                                <property name="partition"
+                                          value="${soaPartiiton}"/>
+                                <property name="configplan"
+                                          value="${basedir}/${project.artifactId}_cfgplan.xml"/>           
+                                <ant antfile="${jdev.home}/bin/ant-sca-deploy.xml"
+                                     dir="${jdev.home}/bin" target="deploy"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources/>
+    </build>
+</project>

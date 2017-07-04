@@ -5,6 +5,7 @@
   <artifactId>pdf-print-servlet</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
+  <name>${project.groupId}/${project.artifactId}_v${project.version}</name>
   <parent>
     <groupId>pdf-print-app</groupId>
     <artifactId>soa11g-maven</artifactId>
