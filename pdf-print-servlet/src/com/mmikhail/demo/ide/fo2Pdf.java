@@ -28,6 +28,19 @@ import org.apache.fop.apps.PageSequenceResults;
 @WebService(targetNamespace = "http://mmikhail.com/demo/ide/")
 public class fo2Pdf {
     private final FopFactory fopFactory;
+    private final String helloFop =  "<!-- $Id$ -->\n" + 
+        "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n" + 
+        "  <fo:layout-master-set>\n" + 
+        "    <fo:simple-page-master master-name=\"simpleA4\" page-height=\"29.7cm\" page-width=\"21cm\" margin-top=\"2cm\" margin-bottom=\"2cm\" margin-left=\"2cm\" margin-right=\"2cm\">\n" + 
+        "      <fo:region-body/>\n" + 
+        "    </fo:simple-page-master>\n" + 
+        "  </fo:layout-master-set>\n" + 
+        "  <fo:page-sequence master-reference=\"simpleA4\">\n" + 
+        "    <fo:flow flow-name=\"xsl-region-body\">\n" + 
+        "      <fo:block>Hello %s!</fo:block>\n" + 
+        "    </fo:flow>\n" + 
+        "  </fo:page-sequence>\n" + 
+        "</fo:root>";
         
     public fo2Pdf() {
         super();
@@ -35,10 +48,10 @@ public class fo2Pdf {
     }
 
     /**
-     * @param fo    Accepts Apache FO XML document and produces PDF document
+     * @param name    Accepts Apache string to produces Hello World! PDF document
      * @return      PDF document as byte[] 
      */
-    public byte[] makePDF(String fo) {
+    public byte[] makePDF(String name) {
     ByteArrayOutputStream result = new ByteArrayOutputStream();
             try {
                 FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
@@ -56,7 +69,7 @@ public class fo2Pdf {
                 Transformer transformer = factory.newTransformer(); // identity transformer
 
                 // Setup input stream
-                Source src = new StreamSource(new StringReader(fo));
+                Source src = new StreamSource(new StringReader(String.format(helloFop,name)));
 
                 // Resulting SAX events (the generated FO) must be piped through to FOP
                 Result res = new SAXResult(fop.getDefaultHandler());
@@ -103,9 +116,10 @@ public class fo2Pdf {
         "  </fo:page-sequence>\n" + 
         "</fo:root>\n";
             try {
+        String name = "Mike";                
         fo2Pdf fo2Pdf = new fo2Pdf();
-        byte rs[] = fo2Pdf.makePDF(sfo);
-        FileOutputStream fos = new FileOutputStream("C:/Temp/hello-fo.pdf");
+        byte rs[] = fo2Pdf.makePDF(name);
+        FileOutputStream fos = new FileOutputStream("C:/Temp/hello-"+name+".pdf");
       
             fos.write(rs);
             fos.close();
